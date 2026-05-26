@@ -12,6 +12,7 @@ End Sub
 
 Sub BeforeAction(action, Entity, MessageList)
 Dim riga, msg, Sconto1, Articolo     
+Dim dt, row 
 
    'MsgBox "Segue Fattura:" & CStr(Entity.SegueFattura), btnOk
    'MsgBox "", btnYesNo
@@ -19,15 +20,24 @@ Dim riga, msg, Sconto1, Articolo
    	
 	   
     For Each riga in Entity.RigheDocumento
-
-        Articolo=riga.Articolo
-        Sconto1=riga.Sconto1
-        
-        if (CStr(riga.Causale1)="CPT") or (CStr(riga.Causale1)="ACQ") then
-    		Entity.SegueFattura=True	
-    	end if
+    	Articolo=riga.Articolo
+    	Sconto1=riga.Sconto1
     	
-		if (riga.RigaChiusaManuale=0) And CStr(riga.Causale1)="SMLT" And CStr(riga.TipoRiga)="Articolo" then
+    	if Cdbl(Sconto1)>0 then
+	    	'MsgBox "Sconto1:" & CStr(riga.Sconto1) & "- Articolo:" & Cstr(riga.Articolo), btnOk
+			Set dt = dataDB.GetDataTable("SELECT PercSconto1Acq,Codart FROM MAGAnagraficaArticoli WHERE Codart = '" & Articolo & "'")  
+			
+			If (dt.Rows.Count > 0) Then  
+			 	dt.Rows(0)("PercSconto1Acq") = Sconto1  
+			 	dataDB.UpdateDataTable dt, "SELECT PercSconto1Acq,Codart FROM MAGAnagraficaArticoli"  
+			End If  
+		end if    	
+    	
+    	'if (CStr(riga.Causale1)="CPT") or (CStr(riga.Causale1)="ACQ") then
+    	'	Entity.SegueFattura=True	
+    	'end if
+    	
+		'if (riga.RigaChiusaManuale=0) And CStr(riga.Causale1)="SMLT" And CStr(riga.TipoRiga)="Articolo" then
   			'And (riga.Causale1<>"CPT") And (riga.TipoRiga=1)
   			
   			'MsgBox "riga.TipoRiga: " & CStr(riga.TipoRiga), btnOk
@@ -41,10 +51,10 @@ Dim riga, msg, Sconto1, Articolo
 		    'colChiusa = CInt(1)  
 
 
-            riga.RigaChiusaManuale=true
+         '   riga.RigaChiusaManuale=true
             
             
-		end if
+		'end if
     Next    
 
    End If          
