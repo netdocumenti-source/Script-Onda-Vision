@@ -90,7 +90,6 @@ end sub
 'End Sub  
 
 
-
 Sub AllowAction(action, Entity, allowObject)
    allowObject.Enable = true
 End Sub
@@ -98,5 +97,12 @@ End Sub
 Sub BeforeAction(action, Entity, MessageList)
 
 End Sub
+
+Sub AfterAction(action, Entity)
+
+End Sub
+
+
+
 
 
